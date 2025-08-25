@@ -1,7 +1,9 @@
-
 import { DiscordSDK } from "@discord/embedded-app-sdk";
 import './style.css'
-import rocketLogo from '/rocket.png'
+
+function Log(...message) {
+  console.log("<<client>> ", ...message);
+}
 
 let auth;
 
@@ -19,24 +21,46 @@ document.getElementsByTagName('head')[0].appendChild(meta);
 
 document.body.style.textAlign = "left";
 
-createUnityInstance(document.querySelector("#unity-canvas"), {
-  arguments: [],
-  dataUrl: "Build/Build/Build.data.gz",
-  frameworkUrl: "Build/Build/Build.framework.js.gz",
-  codeUrl: "Build/Build/Build.wasm.gz",
-  streamingAssetsUrl: "StreamingAssets",
-  companyName: "GézaVenturesStudio",
-  productName: "Adventure",
-  productVersion: "0.1.0",
-  // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-  // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-}).then(() => {
-  setupDiscordSdk().then(() => {
-    console.log("Discord SDK is authenticated");
-    appendVoiceChannelName();
-    appendGuildAvatar();
-    // We can now make API calls within the scopes we requested in setupDiscordSDK()
-    // Note: the access_token returned is a sensitive secret and should be treated as such
+setupDiscordSdk().then(() => {
+  Log("Discord SDK is ready frfr");
+
+  createUnityInstance(document.querySelector("#unity-canvas"), {
+    arguments: [],
+    dataUrl: "Build/Build/Build.data.gz",
+    frameworkUrl: "Build/Build/Build.framework.js.gz",
+    codeUrl: "Build/Build/Build.wasm.gz",
+    streamingAssetsUrl: "StreamingAssets",
+    companyName: "GézaVenturesStudio",
+    productName: "Adventure",
+    productVersion: "0.1.0",
+    // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+    // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+  }).then(async unityInstance => {
+    Log("bob", unityInstance);
+
+    const member = await fetch(`https://discord.com/api/v10/users/@me/guilds/${discordSdk.guildId}/member`, {
+      headers: {
+        Authorization: `Bearer ${auth.access_token}`,
+      },
+    }).then((response) => response.json());
+
+    let username = member?.nick ?? auth.user.global_name;
+    let iconUrl = "";
+
+    if (member?.avatar != null) {
+      iconUrl = `https://cdn.discordapp.com/guilds/${discordSdk.guildId}/members/${auth.user.id}/avatars/${member.avatar}.webp?size=256`;
+    } else {
+      iconUrl = `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=256`;
+    }
+
+    if (unityInstance) {
+      Log("bob sending message");
+      unityInstance.SendMessage("Bridge", "SetUserData", JSON.stringify({
+        "username": username,
+        "iconUrl": iconUrl
+      }));
+    }
+
   });
 });
 
@@ -51,7 +75,7 @@ async function appendVoiceChannelName() {
   // the dm_channels.read scope which requires Discord approval.
   if (discordSdk.channelId != null && discordSdk.guildId != null) {
     // Over RPC collect info about the channel
-    const channel = await discordSdk.commands.getChannel({channel_id: discordSdk.channelId});
+    const channel = await discordSdk.commands.getChannel({ channel_id: discordSdk.channelId });
     if (channel.name != null) {
       activityChannelName = channel.name;
     }
@@ -95,8 +119,13 @@ async function appendGuildAvatar() {
 }
 
 async function setupDiscordSdk() {
-  await discordSdk.ready();
-  console.log("Discord SDK is ready");
+  Log("GEEEE")
+  try {
+    await discordSdk.ready();
+  } catch (error) {
+    Log(error);
+  }
+  Log("bob Discord SDK is ready asd", discordSdk);
 
   // Authorize with Discord Client
   const { code } = await discordSdk.commands.authorize({
@@ -107,9 +136,10 @@ async function setupDiscordSdk() {
     scope: [
       "identify",
       "guilds",
-      "applications.commands"
+      "guilds.members.read"
     ],
   });
+  Log("bob Authorization code:", code);
   const response = await fetch("/api/token", {
     method: "POST",
     headers: {
@@ -127,8 +157,11 @@ async function setupDiscordSdk() {
   });
 
   if (auth == null) {
+    Log("bob Authenticate command failed");
     throw new Error("Authenticate command failed");
   }
+
+  Log("bob Authenticated");
 }
 
 //<img src="${rocketLogo}" class="logo" alt="Discord" />
