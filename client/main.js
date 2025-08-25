@@ -21,9 +21,9 @@ document.body.style.textAlign = "left";
 
 createUnityInstance(document.querySelector("#unity-canvas"), {
   arguments: [],
-  dataUrl: "Build/Build.data.br",
-  frameworkUrl: "Build/Build.framework.js.br",
-  codeUrl: "Build/Build.wasm.br",
+  dataUrl: "Build/Build/Build.data.br",
+  frameworkUrl: "Build/Build/Build.framework.js.br",
+  codeUrl: "Build/Build/Build.wasm.br",
   streamingAssetsUrl: "StreamingAssets",
   companyName: "DefaultCompany",
   productName: "Adventure",
