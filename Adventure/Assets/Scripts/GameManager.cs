@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("<< Got data: " + userData);
             UserData data = JsonUtility.FromJson<UserData>(userData);
-            username.text = "data " + data.username;
+            username.text = data.username + "\n" + data.iconUrl + "\n" + data.access_token;
         };
     }
 

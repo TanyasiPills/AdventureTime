@@ -22,8 +22,6 @@ document.getElementsByTagName('head')[0].appendChild(meta);
 document.body.style.textAlign = "left";
 
 setupDiscordSdk().then(() => {
-  Log("Discord SDK is ready frfr");
-
   createUnityInstance(document.querySelector("#unity-canvas"), {
     arguments: [],
     dataUrl: "Build/Build/Build.data.gz",
@@ -36,7 +34,7 @@ setupDiscordSdk().then(() => {
     // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
     // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
   }).then(async unityInstance => {
-    Log("bob", unityInstance);
+    Log(auth)
 
     const member = await fetch(`https://discord.com/api/v10/users/@me/guilds/${discordSdk.guildId}/member`, {
       headers: {
@@ -57,10 +55,10 @@ setupDiscordSdk().then(() => {
       Log("bob sending message");
       unityInstance.SendMessage("Bridge", "SetUserData", JSON.stringify({
         "username": username,
-        "iconUrl": iconUrl
+        "iconUrl": iconUrl,
+        "access_token": auth.access_token
       }));
     }
-
   });
 });
 
@@ -119,13 +117,8 @@ async function appendGuildAvatar() {
 }
 
 async function setupDiscordSdk() {
-  Log("GEEEE")
-  try {
-    await discordSdk.ready();
-  } catch (error) {
-    Log(error);
-  }
-  Log("bob Discord SDK is ready asd", discordSdk);
+  Log("Setting up Discord SDK");
+  await discordSdk.ready();
 
   // Authorize with Discord Client
   const { code } = await discordSdk.commands.authorize({
@@ -139,7 +132,7 @@ async function setupDiscordSdk() {
       "guilds.members.read"
     ],
   });
-  Log("bob Authorization code:", code);
+
   const response = await fetch("/api/token", {
     method: "POST",
     headers: {
@@ -157,11 +150,11 @@ async function setupDiscordSdk() {
   });
 
   if (auth == null) {
-    Log("bob Authenticate command failed");
+    Log("Authenticate command failed");
     throw new Error("Authenticate command failed");
   }
 
-  Log("bob Authenticated");
+  Log("Discord SDK is ready");
 }
 
 //<img src="${rocketLogo}" class="logo" alt="Discord" />

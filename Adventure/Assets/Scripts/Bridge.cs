@@ -6,6 +6,7 @@ public class UserData
 {
     public string username;
     public string iconUrl;
+    public string access_token;
 }
 public class Bridge : MonoBehaviour
 {
