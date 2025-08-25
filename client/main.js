@@ -21,11 +21,11 @@ document.body.style.textAlign = "left";
 
 createUnityInstance(document.querySelector("#unity-canvas"), {
   arguments: [],
-  dataUrl: "Build/Build/Build.data.br",
-  frameworkUrl: "Build/Build/Build.framework.js.br",
-  codeUrl: "Build/Build/Build.wasm.br",
+  dataUrl: "Build/Build/Build.data.gz",
+  frameworkUrl: "Build/Build/Build.framework.js.gz",
+  codeUrl: "Build/Build/Build.wasm.gz",
   streamingAssetsUrl: "StreamingAssets",
-  companyName: "DefaultCompany",
+  companyName: "GézaVenturesStudio",
   productName: "Adventure",
   productVersion: "0.1.0",
   // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
