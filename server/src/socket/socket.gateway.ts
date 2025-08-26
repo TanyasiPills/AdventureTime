@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({ cors: { origin: "*" } })
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
@@ -8,18 +8,18 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
   @WebSocketServer() server: Server;
 
-  handleConnection(client: any, ...args: any[]) {
+  handleConnection(client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
   }
-  handleDisconnect(client: any) {
+  handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
   }
-  afterInit(server: any) {
-    this.logger.log(`WebSocket server initialized: ${server}`);
+  afterInit() {
+    this.logger.log(`WebSocket server initialized`);
   }
 
   @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
+  handleMessage(client: Socket, payload: any): string {
     return 'Hello world!';
   }
 }
