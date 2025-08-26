@@ -35,27 +35,12 @@ setupDiscordSdk().then(() => {
     // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
   }).then(async unityInstance => {
     Log(auth)
-
-    const member = await fetch(`https://discord.com/api/v10/users/@me/guilds/${discordSdk.guildId}/member`, {
-      headers: {
-        Authorization: `Bearer ${auth.access_token}`,
-      },
-    }).then((response) => response.json());
-
-    let username = member?.nick ?? auth.user.global_name;
-    let iconUrl = "";
-
-    if (member?.avatar != null) {
-      iconUrl = `https://cdn.discordapp.com/guilds/${discordSdk.guildId}/members/${auth.user.id}/avatars/${member.avatar}.webp?size=256`;
-    } else {
-      iconUrl = `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=256`;
-    }
-
+    
     if (unityInstance) {
       Log("bob sending message");
       unityInstance.SendMessage("Bridge", "SetUserData", JSON.stringify({
-        "username": username,
-        "iconUrl": iconUrl,
+        "username": auth.user.global_name,
+        "iconUrl": `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=256`,
         "access_token": auth.access_token
       }));
     }
