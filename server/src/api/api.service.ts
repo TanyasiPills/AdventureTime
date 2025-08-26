@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma.service';
 export class ApiService {
     constructor(private readonly db: PrismaService) { }
 
-    async token(code: string) {
+    async Token(code: string) {
         const params = new URLSearchParams();
         params.append("client_id", process.env.VITE_DISCORD_CLIENT_ID!);
         params.append("client_secret", process.env.DISCORD_CLIENT_SECRET!);
@@ -28,6 +28,47 @@ export class ApiService {
 
         this.updateUser(token);
         return { access_token: token.access_token };
+    }
+
+    async AuthSock(sessionToken: string, authToken: string){
+        const session = await this.db.session.findUnique({
+            where: { token: sessionToken },
+        });
+        const access = await this.db.user.findFirst({where: {access_token: authToken},});
+        let isValid = (access?.id == session?.userId);
+        return { valid: isValid, userId: access?.id };
+    }
+
+    async Validate(sessionToken: string) {
+        const session = await this.db.session.findUnique({
+            where: { token: sessionToken },
+        });
+
+        let isInvalid = !session;
+        let auth: any = null;
+
+        if (session) {
+            const user = await this.db.user.findUnique({
+                where: { id: session.userId },
+                select: { access_token: true },
+            });
+
+            if (user?.access_token) {
+                const userResponse = await fetch("https://discord.com/api/users/@me", {
+                headers: { Authorization: `Bearer ${user.access_token}` },
+                });
+
+                if (userResponse.ok) {
+                    auth = user.access_token;
+                } else {
+                    isInvalid = true;
+                }
+            } else {
+                isInvalid = true;
+            }
+        }
+
+        return { need: isInvalid, auth };
     }
 
     async updateUser(token) {
