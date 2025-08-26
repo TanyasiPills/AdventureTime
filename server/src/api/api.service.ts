@@ -32,7 +32,7 @@ export class ApiService {
 
         const {userId} = await this.updateUser(token);
 
-        this.db.session.create({data:{
+        await this.db.session.create({data:{
             token: shaToken,
             userId: userId
         }});
@@ -40,12 +40,9 @@ export class ApiService {
         return { access_token: token.access_token, session_token:  shaToken};
     }
 
-    async AuthSock(sessionToken: string, authToken: string){
-        const session = await this.db.session.findUnique({
-            where: { token: sessionToken },
-        });
+    async AuthSock(authToken: string){
         const access = await this.db.user.findFirst({where: {access_token: authToken},});
-        let isValid = (access?.id == session?.userId);
+        let isValid = access ? true : false;
         return { valid: isValid, userId: access?.id };
     }
 
@@ -64,9 +61,11 @@ export class ApiService {
             });
 
             if (user?.access_token) {
+                console.log("<< validate check start");
                 const userResponse = await fetch("https://discord.com/api/users/@me", {
                 headers: { Authorization: `Bearer ${user.access_token}` },
                 });
+                console.log("<< validate check end");
 
                 if (userResponse.ok) {
                     auth = user.access_token;
