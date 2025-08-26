@@ -98,7 +98,8 @@ if(needTokenAuth){
       code,
     }),
   });
-  const { access_token } = await response.json();
+  const { access_token, session_token } = await response.json();
+  localStorage.setItem("sessionToken", session_token);
 
   // Authenticate with Discord client (using the access_token)
   auth = await discordSdk.commands.authenticate({

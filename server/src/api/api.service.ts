@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import crypto from "crypto"
 
 @Injectable()
 export class ApiService {
@@ -26,8 +27,17 @@ export class ApiService {
 
         const token = await response.json();
 
-        this.updateUser(token);
-        return { access_token: token.access_token };
+        const randomToken = crypto.randomBytes(32);
+        const shaToken = crypto.createHash('sha256').update(randomToken).digest('hex');
+
+        const {userId} = await this.updateUser(token);
+
+        this.db.session.create({data:{
+            token: shaToken,
+            userId: userId
+        }});
+
+        return { access_token: token.access_token, session_token:  shaToken};
     }
 
     async AuthSock(sessionToken: string, authToken: string){
@@ -92,6 +102,6 @@ export class ApiService {
         console.log("Token:", token);
         console.log("User Info:", user);
 
-        return { access_token: token.access_token };
+        return { userId: user.id };
     }
 }

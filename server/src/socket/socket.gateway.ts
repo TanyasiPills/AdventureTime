@@ -1,12 +1,7 @@
 import { Logger, Module } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ApiModule } from 'src/api/api.module';
 import { ApiService } from 'src/api/api.service';
-
-@Module({
-  imports: [ApiModule]
-})
 
 @WebSocketGateway({ cors: { origin: "*" } })
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
