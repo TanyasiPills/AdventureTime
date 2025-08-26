@@ -142,6 +142,8 @@ async function setupDiscordSdk() {
       code,
     }),
   });
+;
+
   const { access_token } = await response.json();
 
   // Authenticate with Discord client (using the access_token)
