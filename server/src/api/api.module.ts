@@ -11,6 +11,7 @@ import { PrismaService } from 'src/prisma.service';
       isGlobal: true
     })
   ],
-  providers: [ApiService, PrismaService]
+  providers: [ApiService, PrismaService],
+  exports: [ApiService]
 })
 export class ApiModule {}
