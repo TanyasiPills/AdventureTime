@@ -15,7 +15,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
   users: [string, string][] = [];
 
   async handleConnection(client: Socket) {
-    const { auth } = client.handshake.auth;
+    const auth: string = client.handshake.query.token as string;
 
     const isValid = await this.apiService.AuthSock(auth);
 

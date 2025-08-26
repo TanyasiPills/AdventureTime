@@ -25,9 +25,9 @@ document.body.style.textAlign = "left";
 setupDiscordSdk().then(() => {
     createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
-        dataUrl: "Build/Build/Build.data.gz",
-        frameworkUrl: "Build/Build/Build.framework.js.gz",
-        codeUrl: "Build/Build/Build.wasm.gz",
+        dataUrl: "Build/Build/Build.data",
+        frameworkUrl: "Build/Build/Build.framework.js",
+        codeUrl: "Build/Build/Build.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "GézaVenturesStudio",
         productName: "Adventure",
@@ -36,11 +36,10 @@ setupDiscordSdk().then(() => {
         Log(auth)
         if (unityInstance) {
             Log("bob sending message");
-            unityInstance.SendMessage("Bridge", "SetUserData", JSON.stringify({
+            unityInstance.SendMessage("GameManager", "SetUserData", JSON.stringify({
                 "username": auth.user.global_name,
                 "iconUrl": `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=256`,
                 "access_token": auth.access_token,
-                "session_token": tokenIn
             }));
         }
     });
