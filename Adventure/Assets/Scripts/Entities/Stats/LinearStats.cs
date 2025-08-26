@@ -9,26 +9,26 @@ public class LinearStats : BaseStats
     public int baseArmorPen;
 
     public int hpScaling;
-    public int armorSclaing;
+    public int armorScaling;
     public int attackDamageScaling;
     public int armorPenScaling;
     public override int Armor(int level)
     {
-        throw new System.NotImplementedException();
+        return baseArmor + (level - 1) * armorScaling;
     }
 
     public override int ArmorPen(int level)
     {
-        throw new System.NotImplementedException();
+        return baseArmorPen + (level - 1) * armorPenScaling;
     }
 
     public override int AttackDamge(int level)
     {
-        throw new System.NotImplementedException();
+        return baseAttackDamge + (level - 1) * attackDamageScaling;
     }
 
     public override int Hp(int level)
     {
-        throw new System.NotImplementedException();
+        return baseHp + (level - 1) * hpScaling;
     }
 }

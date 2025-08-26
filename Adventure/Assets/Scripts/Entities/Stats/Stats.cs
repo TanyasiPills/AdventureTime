@@ -11,6 +11,7 @@ public class Stats
 
     public Stats(BaseStats baseStats, int level, Action<int> OnLevelChange)
     {
+        this.level = level;
         this.baseStats = baseStats;
         mediator = new StatsMediator();
         OnLevelChange += newLevel => this.level = newLevel;

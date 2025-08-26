@@ -5,16 +5,13 @@ public abstract class StatModifier : IDisposable
 {
     public bool markedForRemoval { get; private set; }
     public event Action<StatModifier> OnDispose = delegate { };
-    private int duration;
+    public int duration;
+    public int priority;
 
-    protected StatModifier(int duration)
+    protected StatModifier(int duration = -999)
     {
         if (duration <= 0) this.duration = -999;
         this.duration = duration;
-    }
-    protected StatModifier()
-    {
-        duration = -999;
     }
 
     public void Update(int turn)

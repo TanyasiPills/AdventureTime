@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class StatsMediator
 {
@@ -16,7 +16,25 @@ public class StatsMediator
 
     public void AddModifier(StatModifier modifier)
     {
-        modifiers.AddLast(modifier);
+        if (modifiers.Count == 0) modifiers.AddFirst(modifier);
+        else
+        {
+            var node = modifiers.First;
+            while (node != null)
+            {
+                if (node.Value.priority >= modifier.priority)
+                {
+                    modifiers.AddBefore(node, modifier);
+                    break;
+                }
+                if (node.Next == null)
+                {
+                    modifiers.AddAfter(node, modifier);
+                    break;
+                }
+                node = node.Next;
+            }
+        }
 
         modifier.OnDispose += _ =>
         {
