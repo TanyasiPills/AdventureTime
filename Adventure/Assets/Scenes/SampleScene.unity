@@ -1395,6 +1395,7 @@ GameObject:
   - component: {fileID: 1947185092}
   - component: {fileID: 1947185091}
   - component: {fileID: 1947185090}
+  - component: {fileID: 1947185095}
   m_Layer: 0
   m_Name: stat tester
   m_TagString: Untagged
@@ -1414,7 +1415,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05f183adeba67204eb888093f0f183fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseStats: {fileID: 0}
+  hp: 0
+  baseStats:
+    rid: 6241474016562118739
+  references:
+    version: 2
+    RefIds:
+    - rid: 6241474016562118739
+      type: {class: LinearStats, ns: , asm: Assembly-CSharp}
+      data:
+        baseHp: 10
+        baseArmor: 0
+        baseAttackDamge: 0
+        baseArmorPen: 0
+        hpScaling: 0
+        armorScaling: 0
+        attackDamageScaling: 0
+        armorPenScaling: 0
 --- !u!65 &1947185091
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1504,6 +1521,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1947185095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947185089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5bed49b355f99e4f9670bb24c9dc2ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemLimit: 100
+  consumableLimit: 12
+  cumhat: {fileID: 11400000, guid: ada3c7fc9bf99a94c8a4fe1bf9406e56, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

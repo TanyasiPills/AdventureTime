@@ -19,23 +19,23 @@ public class Stats
 
     public StatsMediator Mediator { get => mediator; }
 
-    public int Hp
+    public float Hp
     {
         get => mediator.PerformQuery(StatType.Hp, baseStats.Hp(level));
     }
 
-    public int Armor
+    public float Armor
     {
-        get;
+        get => mediator.PerformQuery(StatType.Armor, baseStats.Armor(level));
     }
 
-    public int AttackDamage
+    public float AttackDamage
     {
-        get;
+        get => mediator.PerformQuery(StatType.AttackDamage, baseStats.AttackDamge(level));
     }
 
-    public int ArmorPen
+    public float ArmorPen
     {
-        get;
+        get => mediator.PerformQuery(StatType.ArmorPen, baseStats.ArmorPen(level));
     }
 }

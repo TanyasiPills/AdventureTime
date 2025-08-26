@@ -1,29 +1,48 @@
 ﻿using System;
 using System.Threading;
 
-public abstract class StatModifier : IDisposable
+public enum Source { Equipment, Consumable }
+[Serializable]
+public abstract class StatModifier
 {
     public bool markedForRemoval { get; private set; }
-    public event Action<StatModifier> OnDispose = delegate { };
+    public event Action<StatModifier> OnRemove = delegate { };
     public int duration;
-    public int priority;
+    public int currentTime;
+    public int priority = 0;
+    public Source source;
 
-    protected StatModifier(int duration = -999)
+    protected StatModifier()
     {
-        if (duration <= 0) this.duration = -999;
-        this.duration = duration;
+        this.duration = 0;
+        this.priority = 0;
+    }
+    protected StatModifier(Source source, int duration = 0)
+    {
+        if (duration < 0) this.duration = 0;
+        else
+        {
+            this.duration = duration;
+            this.currentTime = duration;
+        }
+        this.source = source;
+    }
+
+    public virtual void applied() 
+    {
+        this.currentTime = duration;
+        this.markedForRemoval = false;
     }
 
     public void Update(int turn)
     {
-        if (duration == -999) return;
-        duration -= turn;
-        if (duration == -1) Dispose(); 
-
+        if (duration == 0) return;
+        currentTime -= turn;
+        if (currentTime == -1) Remove();
     }
-    public abstract int Handle(StatType type, int value);
-    public void Dispose()
+    public abstract float Handle(StatType type, float value);
+    public void Remove()
     {
-        OnDispose.Invoke(this);
+        OnRemove.Invoke(this);
     }
 }
