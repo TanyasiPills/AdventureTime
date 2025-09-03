@@ -14,7 +14,7 @@ public class SocksManager : MonoBehaviour
     }
     */
     [DllImport("__Internal")]
-    private static extern void ConnectSocket(string url, string path);
+    private static extern void ConnectSocket(string url, string path = "/socket.io");
 
     [DllImport("__Internal")]
     private static extern void SendSocketMessage(string eventName, string message);
@@ -22,57 +22,25 @@ public class SocksManager : MonoBehaviour
     {
         Debug.Log("<< Connecting to socket...");
         ConnectSocket("wss://1409589415721959496.discordsays.com", "/server/socket.io");
-        /*
-        var options = new IO.Options();
-        options.Transports = ImmutableList.Create(Quobject.EngineIoClientDotNet.Client.Transports.WebSocket.NAME);
-        options.Query = new Dictionary<string, string> { { "token", accessToken } };
-        options.Path = "/server/socket.io/";
-
-        Socket socket = IO.Socket("wss://1409589415721959496.discordsays.com", options);
-
-        socket.On(Socket.EVENT_CONNECT, () =>
-        {
-            Debug.Log("<< Connected to the server");
-        });
-
-        socket.On(Socket.EVENT_CONNECT_ERROR, (err) =>
-        {
-            Debug.LogError("Connect error: " + err);
-        });
-
-        socket.On(Socket.EVENT_DISCONNECT, () =>
-        {
-            Debug.LogWarning("Disconnected");
-            socket.Close();
-        });*/
     }
 
-    [ContextMenu("Testing")]
-    public void Test()
+    public void OnJSConnected(string socketId)
     {
-        Debug.Log("testing socket");
-        string accessToken = "bob";
-        var options = new IO.Options();
-        options.Transports = ImmutableList.Create(Quobject.EngineIoClientDotNet.Client.Transports.WebSocket.NAME);
-        options.Query = new Dictionary<string, string> { { "token", accessToken } };
-        options.Path = "/server/socket.io/";
+        Debug.Log("<< WS Connected Socket id: " + socketId);
+    }
 
-        Socket socket = IO.Socket("https://1409589415721959496.discordsays.com", options);
+    public void OnJSDisconnected(string socketId)
+    {
+        Debug.Log("<< WS Disconnected");
+    }
 
-        socket.On(Socket.EVENT_CONNECT, () =>
-        {
-            Debug.Log("<< Connected to the server");
-        });
+    public void OnJSError(string errorJSON)
+    {
+        Debug.Log("<< WS Error: " + errorJSON);
+    }
 
-        socket.On(Socket.EVENT_CONNECT_ERROR, (err) =>
-        {
-            Debug.LogError("Connect error: " + err);
-        });
-
-        socket.On(Socket.EVENT_DISCONNECT, () =>
-        {
-            Debug.LogWarning("Disconnected");
-            socket.Close();
-        });
+    public void OnJSMessage(string data)
+    {
+        Debug.Log("<< WS Message: " + data);
     }
 }
