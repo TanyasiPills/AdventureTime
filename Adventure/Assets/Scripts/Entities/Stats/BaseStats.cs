@@ -1,9 +1,11 @@
+using System;
 using UnityEngine;
 
-public abstract class BaseStats : ScriptableObject
+[Serializable]
+public abstract class BaseStats
 {
-    public abstract int Hp(int level);
-    public abstract int Armor(int level);
-    public abstract int AttackDamge(int level);
-    public abstract int ArmorPen(int level);
+    public abstract float Hp(int level);
+    public abstract float Armor(int level);
+    public abstract float AttackDamge(int level);
+    public abstract float ArmorPen(int level);
 }

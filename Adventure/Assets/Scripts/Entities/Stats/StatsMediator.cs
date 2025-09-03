@@ -5,7 +5,7 @@ public class StatsMediator
 {
     readonly LinkedList<StatModifier> modifiers = new LinkedList<StatModifier>();
 
-    public int PerformQuery(StatType type, int baseValue)
+    public float PerformQuery(StatType type, float baseValue)
     {
         foreach (StatModifier modifier in modifiers)
         {
@@ -36,10 +36,12 @@ public class StatsMediator
             }
         }
 
-        modifier.OnDispose += _ =>
+        modifier.OnRemove += _ =>
         {
             modifiers.Remove(modifier);
         };
+
+        modifier.applied();
     }
 
     public void Update(int turn)
@@ -59,7 +61,7 @@ public class StatsMediator
 
             if (node.Value.markedForRemoval)
             {
-                node.Value.Dispose();
+                node.Value.Remove();
             }
 
             node = nextNode;

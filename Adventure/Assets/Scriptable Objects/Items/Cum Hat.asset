@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Cum Hat
+  m_EditorClassIdentifier: Assembly-CSharp::Equipment
+  id: 2
+  itemName: Cum hat
+  description: Cum hat
+  type: 0
+  modifiers:
+  - rid: 6241474017660502095
+  - rid: 6241474017660502096
+  - rid: 6241474017660502097
+  references:
+    version: 2
+    RefIds:
+    - rid: 6241474017660502095
+      type: {class: BasicModifier, ns: , asm: Assembly-CSharp}
+      data:
+        duration: -999
+        currentTime: 0
+        priority: -95
+        source: 0
+        type: 0
+        operatorType: 0
+        value: 100
+    - rid: 6241474017660502096
+      type: {class: BasicModifier, ns: , asm: Assembly-CSharp}
+      data:
+        duration: 0
+        currentTime: 0
+        priority: -95
+        source: 0
+        type: 1
+        operatorType: 0
+        value: 50
+    - rid: 6241474017660502097
+      type: {class: BasicModifier, ns: , asm: Assembly-CSharp}
+      data:
+        duration: 0
+        currentTime: 0
+        priority: -90
+        source: 0
+        type: 0
+        operatorType: 2
+        value: 1.1
