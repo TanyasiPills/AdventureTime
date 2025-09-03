@@ -3,7 +3,7 @@ import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessa
 import { Server, Socket } from 'socket.io';
 import { ApiService } from 'src/api/api.service';
 
-@WebSocketGateway({ cors: { origin: "*" } })
+@WebSocketGateway({ cors: { origin: "*" }, allowEIO3: true })
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
 
     constructor(private readonly apiService: ApiService){}
@@ -16,6 +16,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
   async handleConnection(client: Socket) {
     const auth: string = client.handshake.query.token as string;
+
+    this.logger.log(`Token: ${auth}`);
 
     const isValid = await this.apiService.AuthSock(auth);
 
