@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UnityEditor.Searcher;
 using UnityEngine;
-using static UnityEditor.Rendering.FilterWindow;
 
 public class Inventory : MonoBehaviour
 {
