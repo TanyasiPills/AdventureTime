@@ -12,44 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: Cum Hat
   m_EditorClassIdentifier: Assembly-CSharp::Equipment
-  id: 2
-  itemName: Cum hat
-  description: Cum hat
+  id: 1
+  itemName: Cum Hat
+  description: A hat made out of cum.
   type: 0
   modifiers:
-  - rid: 6241474017660502095
-  - rid: 6241474017660502096
-  - rid: 6241474017660502097
+  - rid: 1360940435616563312
+  - rid: 1360940435616563313
   references:
     version: 2
     RefIds:
-    - rid: 6241474017660502095
-      type: {class: BasicModifier, ns: , asm: Assembly-CSharp}
-      data:
-        duration: -999
-        currentTime: 0
-        priority: -95
-        source: 0
-        type: 0
-        operatorType: 0
-        value: 100
-    - rid: 6241474017660502096
+    - rid: 1360940435616563312
       type: {class: BasicModifier, ns: , asm: Assembly-CSharp}
       data:
         duration: 0
         currentTime: 0
-        priority: -95
+        priority: 0
+        source: 0
+        type: 0
+        operatorType: 0
+        value: 500
+    - rid: 1360940435616563313
+      type: {class: BasicModifier, ns: , asm: Assembly-CSharp}
+      data:
+        duration: 0
+        currentTime: 0
+        priority: 0
         source: 0
         type: 1
         operatorType: 0
-        value: 50
-    - rid: 6241474017660502097
-      type: {class: BasicModifier, ns: , asm: Assembly-CSharp}
-      data:
-        duration: 0
-        currentTime: 0
-        priority: -90
-        source: 0
-        type: 0
-        operatorType: 2
-        value: 1.1
+        value: 100

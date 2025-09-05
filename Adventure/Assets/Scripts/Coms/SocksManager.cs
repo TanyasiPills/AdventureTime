@@ -60,11 +60,11 @@ public class SocksManager : MonoBehaviour
             OnJSError(JsonUtility.ToJson(err));
         });
 
-        socket.On(Socket.EVENT_DISCONNECT, (id) =>
-        {
-            OnJSDisconnected(id.ToString());
-            socket.Close();
-        });
+            socket.On(Socket.EVENT_DISCONNECT, (id) =>
+            {
+                OnJSDisconnected(id.ToString());
+                socket.Close();
+            });
 
         socket.On(Socket.EVENT_MESSAGE, (data) =>
         {
@@ -86,12 +86,11 @@ public class SocksManager : MonoBehaviour
 
     public void SendMessage(string eventName, string message)
     {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            SendSocketMessage(eventName, message);
-#else
-        //Debug.Log("sent message: "+message);
-        socket.Emit(eventName, message);
-#endif
+        #if UNITY_WEBGL && !UNITY_EDITOR
+                            SendSocketMessage(eventName, message);
+        #else
+            socket.Send(eventName, message);
+        #endif
     }
 
     public void OnJSConnected()
@@ -112,34 +111,5 @@ public class SocksManager : MonoBehaviour
     public void OnJSMessage(string data)
     {
         Debug.Log("<< WS Message: " + data);
-    }
-
-    public void OnUserJoin(string dataIn)
-    {
-        UserJoinData user = JsonUtility.FromJson<UserJoinData>(dataIn);
-
-        manager.Enqueue(() =>
-        {
-            manager.AddUser(user.id, user.username);
-        });
-    }
-
-    public void OnPositionUpdate(string dataIn)
-    {
-        Debug.Log(dataIn);
-        PosUpdateData pos = JsonUtility.FromJson<PosUpdateData>(dataIn);
-        Debug.Log(pos.position);
-        manager.Enqueue(() =>{
-            manager.UpdatePos(pos.client, pos.position);
-        });
-    }
-
-    private void OnDestroy()
-    {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            DisconnectSocket();
-#else
-        socket.Disconnect();
-#endif
     }
 }
