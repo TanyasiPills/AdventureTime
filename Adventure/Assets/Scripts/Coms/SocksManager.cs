@@ -14,14 +14,14 @@ public class SocksManager : MonoBehaviour
     }
     */
     [DllImport("__Internal")]
-    private static extern void ConnectSocket(string url, string path = "/socket.io");
+    private static extern void ConnectSocket(string url = "", string path = "/socket.io");
 
     [DllImport("__Internal")]
     private static extern void SendSocketMessage(string eventName, string message);
     public void SetupSocketComs(string accessToken)
     {
         Debug.Log("<< Connecting to socket...");
-        ConnectSocket("wss://1409589415721959496.discordsays.com", "/server/socket.io");
+        ConnectSocket(path: "/server/socket.io");
     }
 
     public void OnJSConnected(string socketId)
