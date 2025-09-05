@@ -85,8 +85,10 @@ public class SocksManager : MonoBehaviour
         Debug.Log("<< WS Message: " + data);
     }
 
+    #if !UNITY_WEBGL || UNITY_EDITOR
     private void OnDestroy()
     {
         socket.Close();
     }
+    #endif
 }
