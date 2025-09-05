@@ -17,6 +17,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
   async handleConnection(client: Socket) {
     const auth: string = client.handshake.query.token as string;
 
+    if (auth == undefined){
+      this.logger.warn(`Invalid connection: ${client.id}`);
+      client.disconnect();
+      return;
+    }
+
     this.logger.log(`Token: ${auth}`);
 
     const isValid = await this.apiService.AuthSock(auth);
@@ -30,6 +36,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
     this.users.push([client.id, isValid.userId!]);
 
     this.logger.log(`Client connected: ${client.id}`);
+
+    let uname = await this.apiService.Username(isValid.userId!);
+
+    client.broadcast.emit("userJoined", {id: client.id, username: uname});
   }
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
@@ -41,5 +51,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
   @SubscribeMessage('message')
   handleMessage(client: Socket, payload: any): string {
     return 'Hello world!';
+  }
+
+  @SubscribeMessage('position')
+  handlePositionUpdate(client: Socket, payload: any) {
+    //this.logger.log(payload);
+    let pos = JSON.parse(payload);
+    client.broadcast.emit("position", {client: client.id, position: pos});
   }
 }

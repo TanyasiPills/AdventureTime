@@ -46,6 +46,11 @@ export class ApiService {
         return { valid: isValid, userId: access?.id };
     }
 
+    async Username(id: string){
+        const user = await this.db.user.findFirst({where: {id}});
+        return user?.name;
+    }
+
     async Validate(sessionToken: string) {
         const session = await this.db.session.findUnique({
             where: { token: sessionToken },

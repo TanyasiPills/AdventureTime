@@ -7,49 +7,53 @@ function Log(...message) {
 
 let auth;
 let tokenIn;
+let discordSdk
 
-const discordSdk = new DiscordSDK(import.meta.env.VITE_DISCORD_CLIENT_ID);
+////Initialization////
+setup();
+function setup(){
+    discordSdk = new DiscordSDK(import.meta.env.VITE_DISCORD_CLIENT_ID);
 
-var canvas = document.querySelector("#unity-canvas");
-canvas.style.width = "100%";
-canvas.style.height = "100%";
-canvas.style.position = "fixed";
+    var canvas = document.querySelector("#unity-canvas");
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.position = "fixed";
+    
+    var meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+    document.getElementsByTagName('head')[0].appendChild(meta);
+    
+    document.body.style.textAlign = "left";
 
-var meta = document.createElement('meta');
-meta.name = 'viewport';
-meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-document.getElementsByTagName('head')[0].appendChild(meta);
-
-document.body.style.textAlign = "left";
-
-setupDiscordSdk().then(() => {
-    createUnityInstance(document.querySelector("#unity-canvas"), {
-        arguments: [],
-        dataUrl: "Build/Build/Build.data.gz",
-        frameworkUrl: "Build/Build/Build.framework.js.gz",
-        codeUrl: "Build/Build/Build.wasm.gz",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "GézaVenturesStudio",
-        productName: "Adventure",
-        productVersion: "0.1.0",
-    }).then(async unityInstance => {
-        Log(auth)
-        if (unityInstance) {
-            Log("sending message");
-            Log("<< user data:", {
-                "username": auth.user.global_name,
-                "iconUrl": `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=256`,
-                "access_token": auth.access_token,
-            });
-            unityInstance.SendMessage("GameManager", "SetUserData", JSON.stringify({
-                "username": auth.user.global_name,
-                "iconUrl": `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=256`,
-                "access_token": auth.access_token,
-            }));
-        }
+    setupDiscordSdk().then(() => {
+        createUnityInstance(document.querySelector("#unity-canvas"), {
+            arguments: [],
+            dataUrl: "Build/Build/Build.data",
+            frameworkUrl: "Build/Build/Build.framework.js",
+            codeUrl: "Build/Build/Build.wasm",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "GézaVenturesStudio",
+            productName: "Adventure",
+            productVersion: "0.1.0",
+        }).then(async unityInstance => {
+            Log(auth)
+            if (unityInstance) {
+                Log("sending message");
+                Log("<< user data:", {
+                    "username": auth.user.global_name,
+                    "iconUrl": `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=256`,
+                    "access_token": auth.access_token,
+                });
+                unityInstance.SendMessage("GameManager", "SetUserData", JSON.stringify({
+                    "username": auth.user.global_name,
+                    "iconUrl": `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=256`,
+                    "access_token": auth.access_token,
+                }));
+            }
+        });
     });
-});
-
+}
 async function setupDiscordSdk() {
 
     Log("<< Setting up Discord SDK");
@@ -122,4 +126,8 @@ async function setupDiscordSdk() {
     }
     Log("Discord SDK is ready");
 }
+
+
+
+
 
