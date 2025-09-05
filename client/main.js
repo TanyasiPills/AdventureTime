@@ -25,9 +25,9 @@ document.body.style.textAlign = "left";
 setupDiscordSdk().then(() => {
     createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
-        dataUrl: "Build/Build/Build.data.gz",
-        frameworkUrl: "Build/Build/Build.framework.js.gz",
-        codeUrl: "Build/Build/Build.wasm.gz",
+        dataUrl: "Build/Build/Build.data",
+        frameworkUrl: "Build/Build/Build.framework.js",
+        codeUrl: "Build/Build/Build.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "GézaVenturesStudio",
         productName: "Adventure",
