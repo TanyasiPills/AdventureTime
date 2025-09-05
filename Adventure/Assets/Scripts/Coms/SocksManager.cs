@@ -35,7 +35,7 @@ public class SocksManager : MonoBehaviour
 
             socket.On(Socket.EVENT_CONNECT, (id) =>
             {
-                OnJSConnected(id.ToString());
+                OnJSConnected(id?.ToString());
             });
 
             socket.On(Socket.EVENT_CONNECT_ERROR, (err) =>
@@ -45,7 +45,7 @@ public class SocksManager : MonoBehaviour
 
             socket.On(Socket.EVENT_DISCONNECT, (id) =>
             {
-                OnJSDisconnected(id.ToString());
+                OnJSDisconnected(id?.ToString());
                 socket.Close();
             });
 
@@ -59,7 +59,7 @@ public class SocksManager : MonoBehaviour
     public void SendMessage(string eventName, string message)
     {
         #if UNITY_WEBGL && !UNITY_EDITOR
-                            SendSocketMessage(eventName, message);
+            SendSocketMessage(eventName, message);
         #else
             socket.Send(eventName, message);
         #endif
@@ -83,5 +83,10 @@ public class SocksManager : MonoBehaviour
     public void OnJSMessage(string data)
     {
         Debug.Log("<< WS Message: " + data);
+    }
+
+    private void OnDestroy()
+    {
+        socket.Close();
     }
 }
