@@ -4,7 +4,7 @@ using UnityEngine;
 public class Entity : MonoBehaviour
 {
     public float hp;
-    private int _level = 10;
+    private int _level = 1;
     [SerializeReference]
     public BaseStats baseStats;
     private Stats stats;
@@ -32,12 +32,6 @@ public class Entity : MonoBehaviour
     void Start()
     {
         stats = new Stats(baseStats, Level, OnLevelChange);
-        Debug.Log(stats.Hp);
-        stats.Mediator.AddModifier(new BasicModifier(StatType.Hp, OperatorType.Multiply, 2.3f, Source.Equipment));
-        stats.Mediator.AddModifier(new BasicModifier(StatType.Hp, OperatorType.Add, 15f, Source.Equipment));
-        stats.Mediator.AddModifier(new BasicModifier(StatType.Hp, OperatorType.Subtract, 5f, Source.Equipment));
-        Debug.Log(stats.Hp);
-
         this.hp = stats.Hp;
     }
 

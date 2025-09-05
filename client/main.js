@@ -35,7 +35,12 @@ setupDiscordSdk().then(() => {
     }).then(async unityInstance => {
         Log(auth)
         if (unityInstance) {
-            Log("bob sending message");
+            Log("sending message");
+            Log("<< user data:", {
+                "username": auth.user.global_name,
+                "iconUrl": `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=256`,
+                "access_token": auth.access_token,
+            });
             unityInstance.SendMessage("GameManager", "SetUserData", JSON.stringify({
                 "username": auth.user.global_name,
                 "iconUrl": `https://cdn.discordapp.com/avatars/${auth.user.id}/${auth.user.avatar}.png?size=256`,
