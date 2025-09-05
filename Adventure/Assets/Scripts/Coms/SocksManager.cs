@@ -33,20 +33,25 @@ public class SocksManager : MonoBehaviour
 
             socket = IO.Socket("ws://localhost:3001", options);
 
-            socket.On(Socket.EVENT_CONNECT, () =>
+            socket.On(Socket.EVENT_CONNECT, (id) =>
             {
-                Debug.Log("<< Connected to the server");
+                OnJSConnected(id.ToString());
             });
 
             socket.On(Socket.EVENT_CONNECT_ERROR, (err) =>
             {
-                Debug.LogError("Connect error: " + err);
+                OnJSError(JsonUtility.ToJson(err));
             });
 
-            socket.On(Socket.EVENT_DISCONNECT, () =>
+            socket.On(Socket.EVENT_DISCONNECT, (id) =>
             {
-                Debug.LogWarning("Disconnected");
+                OnJSDisconnected(id.ToString());
                 socket.Close();
+            });
+
+            socket.On(Socket.EVENT_MESSAGE, (data) =>
+            {
+                OnJSMessage(data.ToString());
             });
         #endif
     }
