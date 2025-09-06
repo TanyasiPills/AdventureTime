@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("adding new user");
         User newUser = new User();
         newUser.username = usernameIn;
-        newUser.position = new Vector3(1,0,0);
+        newUser.position = new Vector3(0,0,0);
         newUser.left = false;
         newUser.needFlip = false;
 

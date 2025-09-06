@@ -46,7 +46,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
     let uname = await this.apiService.Username(isValid.userId!);
 
-    this.users[client.id] = { id: isValid.userId!, username: uname!, position: { x:1, y:0 }};
+    this.users[client.id] = { id: isValid.userId!, username: uname!, position: { x:0, y:0 }};
 
     this.logger.log(`Client connected: ${client.id}`);
 

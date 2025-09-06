@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,11 +12,14 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 2f;
 
     public SpriteRenderer sr;
+    public Animator animator;
 
     private GameObject manager;
     private SocksManager sock;
 
     private Rigidbody2D rb;
+
+    private Vector2 prevPos;
 
     void Awake()
     {
@@ -39,6 +43,9 @@ public class PlayerMovement : MonoBehaviour
         sock = manager.GetComponent<SocksManager>();
 
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+
+        prevPos = rb.position;
     }
 
     private void OnInteract(InputAction.CallbackContext context)
@@ -50,22 +57,22 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         Vector2 move = moveAction.ReadValue<Vector2>() * moveSpeed;
+        rb.MovePosition(rb.position + move);
 
-        RaycastHit2D[] hits = new RaycastHit2D[1];
-        int hitCount = rb.Cast(move, hits, move.magnitude);
+        Vector2 diff = rb.position - prevPos;
 
-        if(hitCount == 0)
+        Debug.Log(diff);
+
+        if ((diff.x < 0 && !sr.flipX) || (diff.x > 0 && sr.flipX)) sr.flipX = !sr.flipX;
+
+        if(diff != Vector2.zero)
         {
-            rb.MovePosition(rb.position + move);
-
-            if ((move.x < 0 && !sr.flipX) || (move.x > 0 && sr.flipX)) sr.flipX = !sr.flipX;
-
-            if (move != Vector2.zero)
-            {
-                sock.SendMessage("position", JsonUtility.ToJson(move));
-            }
+            animator.SetBool("isRunning", true);
+            sock.SendMessage("position", JsonUtility.ToJson(move));
         }
-        
+        else animator.SetBool("isRunning", false);
+
+        prevPos = rb.position;
     }
 
     private void OnDisable()
