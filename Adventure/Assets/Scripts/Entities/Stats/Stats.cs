@@ -19,6 +19,18 @@ public class Stats
 
     public StatsMediator Mediator { get => mediator; }
 
+    public float GetStat(StatType type)
+    {
+        switch (type)
+        {
+            case StatType.Hp: return Hp;
+            case StatType.Armor: return Armor;
+            case StatType.AttackDamage: return AttackDamage;
+            case StatType.ArmorPen: return ArmorPen;
+        }
+        return 0;
+    }
+
     public float Hp
     {
         get => mediator.PerformQuery(StatType.Hp, baseStats.Hp(level));

@@ -12,7 +12,6 @@ public class BasicModifier : StatModifier
     public OperatorType operatorType;
     [SerializeField]
     public float value;
-    [SerializeField]
 
 
     public BasicModifier() : base() { }

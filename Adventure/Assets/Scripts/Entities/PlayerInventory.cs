@@ -95,16 +95,15 @@ public class PlayerInventory : Inventory
     {
         if (item is Consumable)
         {
-            foreach (KeyValuePair<Consumable, int> kvp in consumables)
-            {
-                if (kvp.Key.id == item.id && kvp.Value >= amount)
-                {
-                    return kvp.Key;
-                }
-            }
+            if (!consumables.ContainsKey((Consumable)item)) return null;
+            if (consumables[(Consumable)item] >= amount) return item;
+            return null;
+        } else
+        {
+            if (!items.ContainsKey(item)) return null;
+            if (items[item] >= amount) return item;
             return null;
         }
-        return base.HasItem(item, amount);
     }
 
     public override bool IsInsertable(Item item, int amount = 1)

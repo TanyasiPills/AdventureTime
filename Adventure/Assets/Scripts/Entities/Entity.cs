@@ -3,11 +3,12 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    public float hp;
+    private float hp;
     private int _level = 1;
     [SerializeReference]
     public BaseStats baseStats;
     private Stats stats;
+    public Element element;
 
     public Action<int> OnLevelChange = delegate { };
 
@@ -27,6 +28,11 @@ public class Entity : MonoBehaviour
     {
         float maxhp = Stats.Hp;
         this.hp = Mathf.Min(this.hp + maxhp * percent, maxhp);
+    }
+
+    public void Damaged(float value, Element element)
+    {
+        this.hp -= value;
     }
 
     void Start()

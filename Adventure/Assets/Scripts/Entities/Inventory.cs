@@ -58,13 +58,8 @@ public class Inventory : MonoBehaviour
 
     public virtual Item HasItem(Item item, int amount = 1)
     {
-        foreach (KeyValuePair<Item, int> kvp in items)
-        {
-            if (kvp.Key.id == item.id && kvp.Value >= amount)
-            {
-                return kvp.Key;
-            }
-        }
+        if (!items.ContainsKey(item)) return null;
+        if (items[item] >= amount) return item;
         return null;
     }
 }
