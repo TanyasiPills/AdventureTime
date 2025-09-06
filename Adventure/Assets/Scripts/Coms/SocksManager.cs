@@ -3,6 +3,7 @@ using Quobject.SocketIoClientDotNet.Client;
 using System.Collections.Immutable;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Unity.VisualScripting;
 
 public class SocksManager : MonoBehaviour
 {
@@ -111,5 +112,23 @@ public class SocksManager : MonoBehaviour
     public void OnJSMessage(string data)
     {
         Debug.Log("<< WS Message: " + data);
+    }
+
+    public void OnUserJoin(string data)
+    {
+        UserJoinData user = JsonUtility.FromJson<UserJoinData>(data);
+        manager.Enqueue(() =>
+        {
+            manager.AddUser(user.id, user.username);
+        });
+    }
+
+    public void OnPositionUpdate(string data)
+    {
+        PosUpdateData user = JsonUtility.FromJson<PosUpdateData>(data);
+        manager.Enqueue(() =>
+        {
+            manager.UpdatePos(user.client,user.position);
+        });
     }
 }

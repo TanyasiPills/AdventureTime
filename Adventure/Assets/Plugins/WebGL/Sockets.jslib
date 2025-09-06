@@ -8,8 +8,8 @@ mergeInto(LibraryManager.library, {
         window.socket = io(url, { path: path, transports: ['websocket'], query: {token: token} });
 
 
-        window.socket.on('connect', function() {
-            SendMessage('GameManager', 'OnJSConnected');
+        window.socket.on('connect', function(data) {
+            SendMessage('GameManager', 'OnJSConnected', JSON.stringify(data));
         });
 
         window.socket.on('message', function(data) {

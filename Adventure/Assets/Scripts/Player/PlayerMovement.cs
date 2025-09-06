@@ -15,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     private GameObject manager;
     private SocksManager sock;
 
+    private Rigidbody2D rb;
+
     void Awake()
     {
         inputActions = new InputSystem_Actions();
@@ -35,6 +37,8 @@ public class PlayerMovement : MonoBehaviour
     {
         manager = GameObject.FindGameObjectWithTag("manager");
         sock = manager.GetComponent<SocksManager>();
+
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void OnInteract(InputAction.CallbackContext context)
@@ -46,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         Vector2 move = moveAction.ReadValue<Vector2>() * moveSpeed;
-        this.transform.position = new Vector3(transform.position.x + move.x, transform.position.y + move.y, transform.position.z);
+        rb.MovePosition(rb.position + move * Time.fixedDeltaTime * moveSpeed);
 
         if ((move.x < 0 && !sr.flipX) || (move.x > 0 && sr.flipX)) sr.flipX = !sr.flipX;
 
