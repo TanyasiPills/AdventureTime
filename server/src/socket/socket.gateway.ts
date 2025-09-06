@@ -52,7 +52,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
     client.broadcast.emit("userJoined", {id: client.id, username: uname});
 
-    const simplifiedList = Object.entries(this.users).map(([clientId, user]) => ({
+    const simplifiedList = Object.entries(this.users) .filter(([clientId, _]) => clientId !== client.id).map(([clientId, user]) => ({
       client: clientId,
       username: user.username,
       position: user.position
@@ -61,6 +61,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
     client.emit("init", {users: simplifiedList});
   }
   handleDisconnect(client: Socket) {
+    delete this.users[client.id];
     this.logger.log(`Client disconnected: ${client.id}`);
   }
   afterInit() {

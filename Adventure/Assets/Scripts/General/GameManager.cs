@@ -113,10 +113,10 @@ public class GameManager : MonoBehaviour
 
     public void AddUser(string idIn, string usernameIn)
     {
-        Debug.Log("newUser");
+        Debug.Log("adding new user");
         User newUser = new User();
         newUser.username = usernameIn;
-        newUser.position = Vector3.zero;
+        newUser.position = new Vector3(1,0,0);
         newUser.left = false;
         newUser.needFlip = false;
 
@@ -135,7 +135,7 @@ public class GameManager : MonoBehaviour
 
     public void AddOldUser(string idIn, string usernameIn, Vector2 positionIn)
     {
-        Debug.Log("newUser");
+        Debug.Log("adding other users");
         User newUser = new User();
         newUser.username = usernameIn;
         newUser.position = new Vector3(positionIn.x, positionIn.y, 0);

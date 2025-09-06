@@ -36,6 +36,11 @@ public class SocksManager : MonoBehaviour
         public string client;
         public string username;
         public Vector2 position;
+
+        public override string ToString()
+        {
+            return $"clientId: {client}, username: {username}, position: {position}";
+        }
     }
 
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -170,7 +175,7 @@ public class SocksManager : MonoBehaviour
         });
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
         DisconnectSocket();
