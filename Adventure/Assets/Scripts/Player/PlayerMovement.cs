@@ -50,14 +50,22 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         Vector2 move = moveAction.ReadValue<Vector2>() * moveSpeed;
-        rb.MovePosition(rb.position + move);
 
-        if ((move.x < 0 && !sr.flipX) || (move.x > 0 && sr.flipX)) sr.flipX = !sr.flipX;
+        RaycastHit2D[] hits = new RaycastHit2D[1];
+        int hitCount = rb.Cast(move, hits, move.magnitude);
 
-        if(move != Vector2.zero)
+        if(hitCount == 0)
         {
-            sock.SendMessage("position", JsonUtility.ToJson(move));
+            rb.MovePosition(rb.position + move);
+
+            if ((move.x < 0 && !sr.flipX) || (move.x > 0 && sr.flipX)) sr.flipX = !sr.flipX;
+
+            if (move != Vector2.zero)
+            {
+                sock.SendMessage("position", JsonUtility.ToJson(move));
+            }
         }
+        
     }
 
     private void OnDisable()
