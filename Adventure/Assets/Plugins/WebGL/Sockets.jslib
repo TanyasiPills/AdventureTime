@@ -32,6 +32,10 @@ mergeInto(LibraryManager.library, {
             SendMessage('GameManager', 'OnPositionUpdate', JSON.stringify(data));
         });
 
+        window.socket.on('init', function(data){
+            SendMessage('GameManager', 'OnInit', JSON.stringify(data));
+        });
+
         window.socket.connect();
     },
 

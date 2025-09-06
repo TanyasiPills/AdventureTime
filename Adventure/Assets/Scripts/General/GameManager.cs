@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
@@ -74,25 +75,19 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private readonly Queue<Action> executionQueue = new Queue<Action>();
+    private readonly ConcurrentQueue<Action> executionQueue = new ConcurrentQueue<Action>();
 
     public void Enqueue(Action action)
     {
         if (action == null) return;
-        lock (executionQueue)
-        {
-            executionQueue.Enqueue(action);
-        }
+        executionQueue.Enqueue(action);
     }
 
     private void Update()
     {
-        lock (executionQueue)
+        while (executionQueue.TryDequeue(out var action))
         {
-            while (executionQueue.Count > 0)
-            {
-                executionQueue.Dequeue().Invoke();
-            }
+            action.Invoke();
         }
 
         foreach (KeyValuePair<string, User> user in users)
@@ -120,8 +115,6 @@ public class GameManager : MonoBehaviour
         newUser.left = false;
         newUser.needFlip = false;
 
-        Debug.Log(playerPrefab);
-
         newUser.prefab = Instantiate(playerPrefab, newUser.position, Quaternion.identity);
 
         for (int i = 0; i < newUser.prefab.transform.childCount; i++)
@@ -142,8 +135,6 @@ public class GameManager : MonoBehaviour
         newUser.left = false;
         newUser.needFlip = false;
 
-        Debug.Log(playerPrefab);
-
         newUser.prefab = Instantiate(playerPrefab, newUser.position, Quaternion.identity);
 
         for (int i = 0; i < newUser.prefab.transform.childCount; i++)
@@ -157,17 +148,21 @@ public class GameManager : MonoBehaviour
 
     public void UpdatePos(string id, Vector2 pos)
     {
-        Vector3 curPos = users[id].position;
-        users[id].position = new Vector3(curPos.x + pos.x, curPos.y + pos.y, curPos.z);
-        if (pos.x < 0 && !users[id].left)
+        if (users.ContainsKey(id))
         {
-            users[id].needFlip = true;
-            users[id].left = true;
+            Vector3 curPos = users[id].position;
+            users[id].position = new Vector3(curPos.x + pos.x, curPos.y + pos.y, curPos.z);
+            if (pos.x < 0 && !users[id].left)
+            {
+                users[id].needFlip = true;
+                users[id].left = true;
+            }
+            else if (pos.x > 0 && users[id].left)
+            {
+                users[id].needFlip = true;
+                users[id].left = false;
+            }
         }
-        else if (pos.x > 0 && users[id].left)
-        {
-            users[id].needFlip = true;
-            users[id].left = false;
-        }
+
     }
 }
