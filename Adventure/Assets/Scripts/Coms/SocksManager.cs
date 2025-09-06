@@ -46,7 +46,7 @@ public class SocksManager : MonoBehaviour
 #if !UNITY_WEBGL || UNITY_EDITOR
     private Socket socket;
 #endif
-    private void Start()
+    private void Awake()
     {
         manager = gameObject.GetComponent<GameManager>();
     }
@@ -129,15 +129,28 @@ public class SocksManager : MonoBehaviour
     {
         if (data != "(null)")
         {
-            Debug.Log(data);
             AlreadyUsers aldUsers = JsonUtility.FromJson<AlreadyUsers>(data);
             foreach (AlreadyUserData user in aldUsers.users)
             {
-                Debug.Log(user);
-                manager.Enqueue(() =>
+                var cap = user;
+                try
                 {
-                    manager.AddOldUser(user.client, user.username, user.position);
-                });
+                    manager.Enqueue(() =>
+                    {
+                        try
+                        {
+                            manager.AddOldUser(cap.client, cap.username, cap.position);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.LogError("AddOldUser failed: " + ex);
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError("Enqueue failed: " + ex);
+                }
             }
         }
     }

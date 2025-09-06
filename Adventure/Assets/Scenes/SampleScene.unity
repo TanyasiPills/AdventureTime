@@ -4843,7 +4843,7 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings: []
     m_Flags: 0
-  moveSpeed: 2
+  moveSpeed: 0.3
   sr: {fileID: 4599596780620649643}
 --- !u!61 &6414280352373709611
 BoxCollider2D:
