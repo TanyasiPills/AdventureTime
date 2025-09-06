@@ -1,7 +1,9 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Security.Principal;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public enum EquipmentType { Helmet, Chestplate, Leggings, Boots, Hand, Amulet, Ring }
 
@@ -10,14 +12,18 @@ public class PlayerInventory : Inventory
     public int consumableLimit = 12;
     public Dictionary<Consumable, int> consumables;
     public List<EquipmentSlot> equipments;
-    private Entity entity;
+    public EntityContainer entityContainer;
+    public Loadout loadout;
 
     public Equipment cumhat;
 
-    protected override void Awake()
+    protected override void Awake() //TODO: init possesions from server
     {
         base.Awake();
         consumables = new Dictionary<Consumable, int>(Math.Min(100, consumableLimit));
+
+        entityContainer = new EntityContainer();
+        loadout = new Loadout();
 
         equipments = new List<EquipmentSlot>(8);
         equipments.Add(new EquipmentSlot(EquipmentType.Helmet));
@@ -29,8 +35,8 @@ public class PlayerInventory : Inventory
         equipments.Add(new EquipmentSlot(EquipmentType.Ring));
         equipments.Add(new EquipmentSlot(EquipmentType.Ring));
 
-        entity = gameObject.GetComponent<Entity>();
-        if (entity == null) throw new Exception("PlayerInventory's gameObject requires Entity");
+        loadout = gameObject.GetComponent<Loadout>();
+        if (loadout == null) throw new Exception("PlayerInventory's gameObject requires Loadout");
     }
 
     [ContextMenu("Equip the Cum")]
@@ -47,21 +53,39 @@ public class PlayerInventory : Inventory
         {
             if (equipments[slot].item != null)
             {
-                equipments[slot].item.Remove(entity);
+                equipments[slot].item.Remove(loadout.Main);
+                equipments[slot].item.Remove(loadout.Support);
                 ForceAddItem(equipments[slot].item);
             }
             equipments[slot].item = item;
-            item.Equip(entity);
+            item.Equip(loadout.Main);
+            item.Equip(loadout.Support);
             return true;
         }
         return false;
     }
 
-    public bool Consume(Consumable item)
+    private void RemoveEquipmentEffectsFromEntity(Entity entity)
+    {
+        foreach (EquipmentSlot slot in equipments)
+        {
+            if (slot.item != null) slot.item.Remove(entity);
+        }
+    }
+
+    private void AddEquipmentEffectsToEntity(Entity entity)
+    {
+        foreach (EquipmentSlot slot in equipments)
+        {
+            if (slot.item != null) slot.item.Equip(entity);
+        }
+    }
+
+    public bool Consume(Consumable item, Entity target)
     {
         if (RemoveItem(item))
         {
-            item.Consume(entity);
+            item.Consume(target);
             return true;
         }
         return false;
@@ -127,6 +151,72 @@ public class PlayerInventory : Inventory
             return true;
         }
         return base.RemoveItem(item, amount);
+    }
+    
+    public bool EquipEntity(Entity entity)
+    {
+        if (!loadout.IsInsertable()) return false;
+        return ForceEquipEntity(entity);
+    }
+
+    public bool ForceEquipEntity(Entity entity)
+    {
+        if (!entityContainer.RemoveEntity(entity)) return false;
+
+        loadout.ForceAdd(entity);
+
+        AddEquipmentEffectsToEntity(entity);
+
+        return true;
+    }
+
+    public bool UnequipEntity(Entity entity)
+    {
+        if (!entityContainer.IsInsertable()) return false;
+
+        return ForceUnequipEntity(entity);
+    }
+
+    public bool UnequipEntity(int index)
+    {
+        if (!entityContainer.IsInsertable()) return false;
+
+        return ForceUnequipEntity(index);
+    }
+
+    public bool ForceUnequipEntity(Entity entity)
+    {
+        if (!loadout.Remove(entity)) return false;
+        entityContainer.ForceAddEntity(entity);
+        RemoveEquipmentEffectsFromEntity(entity);
+        return true;
+    }
+
+    public bool ForceUnequipEntity(int index)
+    {
+        Entity entity = loadout.Remove(index);
+        if (entity == null) return false;
+        entityContainer.ForceAddEntity(entity);
+        RemoveEquipmentEffectsFromEntity(entity);
+        return true;
+    }
+
+    public bool SwitchEntity(Entity oldEntity, Entity newEntity)
+    {
+        if (newEntity == null) return false;
+        if (!loadout.HasEntity(oldEntity) || !entityContainer.HasEntity(newEntity)) return false;
+
+        ForceUnequipEntity(oldEntity);
+        ForceEquipEntity(newEntity);
+
+        return true;
+    }
+
+    public bool SwitchEntity(int index, Entity newEntity)
+    {
+        Entity oldEntity = loadout.Get(index);
+
+        return SwitchEntity(oldEntity, newEntity);
     }
 }
 

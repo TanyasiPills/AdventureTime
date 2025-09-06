@@ -5,7 +5,7 @@ public enum StatType { Hp, Armor, AttackDamage, ArmorPen }
 
 public class Stats
 {
-    public int level;
+    private int level;
     public BaseStats baseStats;
     private readonly StatsMediator mediator;
 

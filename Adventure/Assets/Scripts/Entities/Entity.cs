@@ -1,15 +1,20 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    private float hp;
+    private float _health;
     private int _level = 1;
+    private Stats stats;
+
     [SerializeReference]
     public BaseStats baseStats;
-    private Stats stats;
     public Element element;
+    [SerializeReference]
+    public List<Attack> attacks;
 
+    public Action<Entity> OnDeath = delegate { };
     public Action<int> OnLevelChange = delegate { };
 
     public Stats Stats { get => stats; }
@@ -19,26 +24,38 @@ public class Entity : MonoBehaviour
         }
     }
 
-    public void Heal(float hp)
+    public float Health { get => _health; private set
+        {
+            _health = Mathf.Min(value, Stats.Hp);
+            if (_health <= 0)
+            {
+                _health = 0;
+                OnDeath.Invoke(this);
+                return;
+            }
+        } 
+    }
+
+
+    public void Heal(float value)
     {
-        this.hp = Mathf.Min(this.hp + hp, Stats.Hp);
+        Health += value;
     }
 
     public void HealPercent(float percent)
     {
-        float maxhp = Stats.Hp;
-        this.hp = Mathf.Min(this.hp + maxhp * percent, maxhp);
+        Health = Health + Stats.Hp * percent;
     }
 
     public void Damaged(float value, Element element)
     {
-        this.hp -= value;
+        Health -= value;
     }
 
     void Start()
     {
         stats = new Stats(baseStats, Level, OnLevelChange);
-        this.hp = stats.Hp;
+        _health = stats.Hp;
     }
 
     [ContextMenu("Log Stats")]
