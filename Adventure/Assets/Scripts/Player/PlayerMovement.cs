@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         Vector2 move = moveAction.ReadValue<Vector2>() * moveSpeed;
-        rb.MovePosition(rb.position + move * moveSpeed);
+        rb.MovePosition(rb.position + move);
 
         if ((move.x < 0 && !sr.flipX) || (move.x > 0 && sr.flipX)) sr.flipX = !sr.flipX;
 
