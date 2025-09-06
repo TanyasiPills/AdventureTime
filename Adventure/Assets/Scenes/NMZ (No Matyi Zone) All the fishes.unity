@@ -3273,9 +3273,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05f183adeba67204eb888093f0f183fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 0
   baseStats:
     rid: 6241474016562118739
+  element: {fileID: 0}
+  attacks:
+  - {fileID: 0}
+  - {fileID: 0}
   references:
     version: 2
     RefIds:
@@ -3393,6 +3396,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemLimit: 100
   consumableLimit: 12
+  entityContainer: {fileID: 0}
+  loadout: {fileID: 0}
   cumhat: {fileID: 0}
 --- !u!1 &2055199225
 GameObject:
@@ -4677,7 +4682,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &4721438805635336101
@@ -4811,6 +4816,7 @@ MonoBehaviour:
     m_Flags: 0
   moveSpeed: 0.1
   sr: {fileID: 4599596780620649643}
+  animator: {fileID: 0}
 --- !u!61 &6414280352373709611
 BoxCollider2D:
   m_ObjectHideFlags: 0
