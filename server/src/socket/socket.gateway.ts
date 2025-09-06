@@ -3,6 +3,17 @@ import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessa
 import { Server, Socket } from 'socket.io';
 import { ApiService } from 'src/api/api.service';
 
+type vec2 = {
+  x: number;
+  y: number;
+};
+
+type User = {
+  id: string;
+  username: string;
+  position: vec2;
+}
+
 @WebSocketGateway({ cors: { origin: "*" }, allowEIO3: true })
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
 
@@ -12,7 +23,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
   @WebSocketServer() server: Server;
 
-  users: [string, string][] = [];
+  users: Record<string, User> = {};
 
   async handleConnection(client: Socket) {
     const auth: string = client.handshake.query.token as string;
@@ -33,13 +44,21 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
         return;
     }
 
-    this.users.push([client.id, isValid.userId!]);
+    let uname = await this.apiService.Username(isValid.userId!);
+
+    this.users[client.id] = { id: isValid.userId!, username: uname!, position: { x:0, y:0 }};
 
     this.logger.log(`Client connected: ${client.id}`);
 
-    let uname = await this.apiService.Username(isValid.userId!);
-
     client.broadcast.emit("userJoined", {id: client.id, username: uname});
+
+    const simplifiedList = Object.entries(this.users).map(([clientId, user]) => ({
+      client: clientId,
+      username: user.username,
+      position: user.position
+    }));
+
+    client.emit("init", {users: simplifiedList});
   }
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
@@ -55,8 +74,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
   @SubscribeMessage('position')
   handlePositionUpdate(client: Socket, payload: any) {
-    //this.logger.log(payload);
     let pos = JSON.parse(payload);
+    let curpos = this.users[client.id].position;
+    this.users[client.id].position = { x: curpos.x+pos.x, y: curpos.y+pos.y }; 
     client.broadcast.emit("position", {client: client.id, position: pos});
   }
 }

@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Unity.VisualScripting;
+using System;
 
 public class SocksManager : MonoBehaviour
 {
@@ -20,6 +21,20 @@ public class SocksManager : MonoBehaviour
     struct PosUpdateData
     {
         public string client;
+        public Vector2 position;
+    }
+
+    [System.Serializable]
+    struct AlreadyUsers
+    {
+        public List<AlreadyUserData> users;
+    }
+
+    [System.Serializable]
+    struct AlreadyUserData
+    {
+        public string client;
+        public string username;
         public Vector2 position;
     }
 
@@ -82,21 +97,44 @@ public class SocksManager : MonoBehaviour
             OnPositionUpdate(data.ToString());
         });
 
+        socket.On("init", (data) =>
+        {
+            OnInit(data.ToSafeString());
+        });
+
 #endif
     }
 
     public void SendMessage(string eventName, string message)
     {
-        #if UNITY_WEBGL && !UNITY_EDITOR
-                            SendSocketMessage(eventName, message);
-        #else
-            socket.Send(eventName, message);
+#if UNITY_WEBGL && !UNITY_EDITOR
+            SendSocketMessage(eventName, message);
+#else
+            //Debug.Log("sending message: " + message+", on evenet: "+eventName);
+            socket.Emit(eventName, message);
         #endif
     }
 
     public void OnJSConnected()
     {
-        Debug.Log("<< WS Connected Socket id");
+        Debug.Log("<< WS Connected to socket");
+    }
+
+    public void OnInit(string data)
+    {
+        if (data != "(null)")
+        {
+            Debug.Log(data);
+            AlreadyUsers aldUsers = JsonUtility.FromJson<AlreadyUsers>(data);
+            foreach (AlreadyUserData user in aldUsers.users)
+            {
+                Debug.Log(user);
+                manager.Enqueue(() =>
+                {
+                    manager.AddOldUser(user.client, user.username, user.position);
+                });
+            }
+        }
     }
 
     public void OnJSDisconnected(string socketId)
@@ -130,5 +168,14 @@ public class SocksManager : MonoBehaviour
         {
             manager.UpdatePos(user.client,user.position);
         });
+    }
+
+    private void OnDisable()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        DisconnectSocket();
+#else
+        socket.Disconnect();
+#endif
     }
 }

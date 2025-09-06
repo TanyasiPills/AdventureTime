@@ -133,6 +133,28 @@ public class GameManager : MonoBehaviour
         users.Add(idIn, newUser);
     }
 
+    public void AddOldUser(string idIn, string usernameIn, Vector2 positionIn)
+    {
+        Debug.Log("newUser");
+        User newUser = new User();
+        newUser.username = usernameIn;
+        newUser.position = new Vector3(positionIn.x, positionIn.y, 0);
+        newUser.left = false;
+        newUser.needFlip = false;
+
+        Debug.Log(playerPrefab);
+
+        newUser.prefab = Instantiate(playerPrefab, newUser.position, Quaternion.identity);
+
+        for (int i = 0; i < newUser.prefab.transform.childCount; i++)
+        {
+            Transform child = newUser.prefab.transform.GetChild(i);
+            if (child.name == "name") child.GetComponent<TMP_Text>().text = newUser.username;
+        }
+
+        users.Add(idIn, newUser);
+    }
+
     public void UpdatePos(string id, Vector2 pos)
     {
         Vector3 curPos = users[id].position;
